@@ -1,6 +1,3 @@
-from math import *
-import operator
-
 def is_palindrome(x):
 	sx = str(x)
 	return sx == sx[::-1]
