@@ -1,20 +1,39 @@
 import math
 
-def primes(maxValue):
-	A = [True]*(maxValue+1)
-	A[0] = False
-	A[1] = False
-	for i in range(2,int(math.sqrt(maxValue))):
-		if A[i]:
-			for j in range(0, maxValue):
-				index = i**2 + j*i
-				if index > maxValue:
-					break
-				A[index] = False
- 
-	for i in range(0,len(A)):
-		if A[i]:
-			yield i
+def primes(limit):
+	'''This uses the Sieve of Atkin (which seemed reasonably sane and simple)
+	http://en.wikipedia.org/wiki/Sieve_of_Atkin'''
+	
+	yield 2
+	yield 3
+	
+	sieve = [False] * (limit + 1)
+	
+	for x in range(1, int(math.sqrt(limit)) + 1):
+		for y in range(1, int(math.sqrt(limit)) + 1):
+			n = 4 * x**2 + y**2
+			
+			if n <= limit and (n % 12 == 1 or n % 12 == 5):
+				sieve[n] = not sieve[n]
+				
+			n = 3 * x**2 + y**2
+			
+			if n <= limit and n % 12 == 7:
+				sieve[n] = not sieve[n]
+				
+			n = 3 * x**2 - y**2
+			
+			if x > y and n <= limit and n % 12 == 11:
+				sieve[n] = not sieve[n]
+				
+	for x in range(5, int(math.sqrt(limit))):
+		if sieve[x]:
+			for y in range(x**2, limit + 1, x**2):
+				sieve[y] = False
+				
+	for p in range(5,limit):
+		if sieve[p]:
+			yield p
 
 def level10():
 	return sum(primes(2000000))
